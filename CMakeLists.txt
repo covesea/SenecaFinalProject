@@ -1,39 +1,54 @@
 cmake_minimum_required(VERSION 3.10)
+project(sensor-st LANGUAGES CXX)
 
-# Project name
-project(sensor-st)
-
-# Set C++17 standard
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Find required Qt packages
-find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets)
+# Find packages
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GTKMM REQUIRED gtkmm-3.0)
+pkg_check_modules(CAIROMM REQUIRED cairomm-1.0)
+
+# JSON library (header-only)
+find_path(NLOHMANN_JSON_INCLUDE_DIR nlohmann/json.hpp)
 
 # Include directories
 include_directories(
-    ${Qt5Core_INCLUDE_DIRS}
-    ${Qt5Gui_INCLUDE_DIRS}
-    ${Qt5Widgets_INCLUDE_DIRS}
-    ${CAIRO_INCLUDE_DIRS}
+    ${GTKMM_INCLUDE_DIRS}
+    ${CAIROMM_INCLUDE_DIRS}
+    ${NLOHMANN_JSON_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-# Define the executable
-add_executable(sensor-st
-    main.cpp
-    gui.cpp
-    temp_logic.cpp
-    sensor.cpp
-    config.cpp
+link_directories(
+    ${GTKMM_LIBRARY_DIRS}
+    ${CAIROMM_LIBRARY_DIRS}
 )
+
+# Sources
+set(SOURCES
+    main.cpp
+    config.cpp
+    sensor.cpp
+    temp_logic.cpp
+    gui.cpp
+)
+
+set(HEADERS
+    config.hpp
+    sensor.hpp
+    temp_logic.hpp
+    gui.hpp
+)
+
+# Executable
+add_executable(sensor-st ${SOURCES} ${HEADERS})
 
 # Link libraries
 target_link_libraries(sensor-st
-    Qt5::Core
-    Qt5::Gui
-    Qt5::Widgets
-    cairo
+    ${GTKMM_LIBRARIES}
+    ${CAIROMM_LIBRARIES}
 )
 
-# Install targets (optional)
-install(TARGETS sensor-st DESTINATION bin)
+# For Yocto to avoid rpath issues
+set_target_properties(sensor-st PROPERTIES INSTALL_RPATH "")

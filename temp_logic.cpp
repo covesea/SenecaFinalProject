@@ -11,10 +11,5 @@ float to_celsius(float f) {
 }
 
 float convert_using_json(const nlohmann::json& config, float value) {
-    std::string target_unit = config.value("target_unit", "C");
-    if (target_unit == "F") {
-        return to_fahrenheit(value);
-    } else {
-        return value; // Already in Celsius
-    }
+    return value; // sensor values are in Celsius; defer conversion to UI logic
 }

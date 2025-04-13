@@ -2,11 +2,11 @@
 {
   "sensors": [
     {
-      "path": "/sys/bus/devices/iio/temp1_input",
+      "path": "/sys/bus/devices/iio/device:0/temp1_input",
       "target_unit": "F"
     },
     {
-      "path": "/sys/bus/devices/iio/temp2_input",
+      "path": "/sys/bus/devices/iio/device:0/ temp2_input",
       "target_unit": "F"
     }
   ]
